@@ -2,6 +2,8 @@ package com.mycompany.mavenproject3;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Mavenproject3 extends JFrame implements Runnable {
     private String text;
@@ -9,14 +11,23 @@ public class Mavenproject3 extends JFrame implements Runnable {
     private int width;
     private BannerPanel bannerPanel;
     private JButton addProductButton;
+    private List<Product> productList = new ArrayList<>();
 
-    public Mavenproject3(String text) {
-        this.text = text;
+    public Mavenproject3() {
         setTitle("WK. STI Chill");
         setSize(600, 150);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+        productList.add(new Product(1, "P001", "Americano", "Coffee", 10000, 10));
+        productList.add(new Product(2, "P002", "Pandan Latte", "Coffee", 20000, 10));
+        productList.add(new Product(3, "P003", "Aren Latte", "Coffee", 15000, 10));
+        productList.add(new Product(4, "P004", "Matcha Frappucino", "Tea", 28000, 10));
+        productList.add(new Product(5, "P005", "Jus Apel", "Juice", 17000, 10));
+        
+        this.text = getBannerTextFromProducts();
+        this.x = -getFontMetrics(new Font("Arial", Font.BOLD, 18)).stringWidth(text);
 
         // Panel teks berjalan
         bannerPanel = new BannerPanel();
@@ -53,6 +64,26 @@ public class Mavenproject3 extends JFrame implements Runnable {
         this.x = -getFontMetrics(new Font("Arial", Font.BOLD, 18)).stringWidth(text);
     }
     
+    public String getBannerTextFromProducts() {
+        StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
+        for (int i = 0; i < productList.size(); i++) {
+            sb.append(productList.get(i).getName());
+            if (i < productList.size() - 1) {
+                sb.append(" | ");
+            }
+        }
+        return sb.toString();
+    }
+
+    public void refreshBanner() {
+        setBannerText(getBannerTextFromProducts());
+    }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
+
+
     @Override
     public void run() {
         width = getWidth();
@@ -71,7 +102,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
     }
 
     public static void main(String[] args) {
-        new Mavenproject3("Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino | Jus Apel");
+        new Mavenproject3();
     }
 }
 

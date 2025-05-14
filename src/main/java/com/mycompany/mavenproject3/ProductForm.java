@@ -36,6 +36,8 @@ public class ProductForm extends JFrame {
     private JButton editButton;
     private JButton deleteButton;
     private Mavenproject3 mainApp;
+    private List<Product> products;
+
 
 private String getAllProductNames() {
     StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
@@ -50,11 +52,8 @@ private String getAllProductNames() {
     
     public ProductForm(Mavenproject3 mainApp) {
         this.mainApp = mainApp;
+        this.products = mainApp.getProductList(); 
 
-        List<Product> products = new ArrayList<>();
-        products.add(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
-        products.add(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
-        
         setTitle("WK. Cuan | Stok Barang");
         setSize(600, 450);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
