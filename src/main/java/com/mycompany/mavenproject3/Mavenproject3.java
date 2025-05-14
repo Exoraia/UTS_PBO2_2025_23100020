@@ -29,7 +29,7 @@ public class Mavenproject3 extends JFrame implements Runnable {
         add(bottomPanel, BorderLayout.SOUTH);
         
         addProductButton.addActionListener(e -> {
-            new ProductForm().setVisible(true);
+            new ProductForm(this).setVisible(true);
         });
 
         setVisible(true);
@@ -48,6 +48,11 @@ public class Mavenproject3 extends JFrame implements Runnable {
         }
     }
 
+    public void setBannerText(String newText) {
+        this.text = newText;
+        this.x = -getFontMetrics(new Font("Arial", Font.BOLD, 18)).stringWidth(text);
+    }
+    
     @Override
     public void run() {
         width = getWidth();

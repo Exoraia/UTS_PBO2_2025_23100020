@@ -35,8 +35,22 @@ public class ProductForm extends JFrame {
     private JButton saveButton;
     private JButton editButton;
     private JButton deleteButton;
+    private Mavenproject3 mainApp;
 
-    public ProductForm() {
+private String getAllProductNames() {
+    StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+        sb.append(tableModel.getValueAt(i, 1)); // Nama Produk
+        if (i < tableModel.getRowCount() - 1) {
+            sb.append(" | ");
+        }
+    }
+    return sb.toString();
+}
+    
+    public ProductForm(Mavenproject3 mainApp) {
+        this.mainApp = mainApp;
+
         List<Product> products = new ArrayList<>();
         products.add(new Product(1, "P001", "Americano", "Coffee", 18000, 10));
         products.add(new Product(2, "P002", "Pandan Latte", "Coffee", 15000, 8));
@@ -86,6 +100,7 @@ public class ProductForm extends JFrame {
         JScrollPane scrollPane = new JScrollPane(drinkTable);
         add(scrollPane, BorderLayout.CENTER);
 
+        
         saveButton.addActionListener(e -> {
             String code = codeField.getText();
             String name = nameField.getText();
@@ -103,6 +118,9 @@ public class ProductForm extends JFrame {
                 int stock = Integer.parseInt(stockText);
 
                 tableModel.addRow(new Object[]{code, name, category, price, stock});
+
+                mainApp.setBannerText(getAllProductNames());
+                products.add(new Product(0, code, name, category, price, stock));
 
                 codeField.setText("");
                 nameField.setText("");
@@ -127,7 +145,7 @@ public class ProductForm extends JFrame {
                 try {
                     double price = Double.parseDouble(priceText);
                     int stock = Integer.parseInt(stockText);
-        
+                    
                     tableModel.setValueAt(code, selectedRow, 0);
                     tableModel.setValueAt(name, selectedRow, 1);
                     tableModel.setValueAt(category, selectedRow, 2);
@@ -139,6 +157,9 @@ public class ProductForm extends JFrame {
                     categoryField.setSelectedIndex(0);
                     priceField.setText("");
                     stockField.setText("");
+
+                    mainApp.setBannerText(getAllProductNames());
+
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Harga dan stok harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -158,6 +179,8 @@ public class ProductForm extends JFrame {
                 categoryField.setSelectedIndex(0);
                 priceField.setText("");
                 stockField.setText("");
+
+                mainApp.setBannerText(getAllProductNames());
             } else {
                 JOptionPane.showMessageDialog(formPanel, "tidak ada yang dipilih");
             }
