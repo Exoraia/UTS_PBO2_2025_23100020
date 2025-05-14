@@ -74,3 +74,5 @@ public class Mavenproject3 extends JFrame implements Runnable {
         new Mavenproject3("Menu yang tersedia: Americano | Pandan Latte | Aren Latte | Matcha Frappucino | Jus Apel");
     }
 }
+
+// Perubahan Nama Commit
