@@ -35,23 +35,20 @@ public class ProductForm extends JFrame {
     private JButton saveButton;
     private JButton editButton;
     private JButton deleteButton;
-    private Mavenproject3 mainApp;
     private List<Product> products;
 
-
-private String getAllProductNames() {
-    StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-        sb.append(tableModel.getValueAt(i, 1)); // Nama Produk
-        if (i < tableModel.getRowCount() - 1) {
-            sb.append(" | ");
+    private String getAllProductNames() {
+        StringBuilder sb = new StringBuilder("Menu yang tersedia: ");
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            sb.append(tableModel.getValueAt(i, 1)); 
+            if (i < tableModel.getRowCount() - 1) {
+                sb.append(" | ");
+            }
         }
+        return sb.toString();
     }
-    return sb.toString();
-}
     
     public ProductForm(Mavenproject3 mainApp) {
-        this.mainApp = mainApp;
         this.products = mainApp.getProductList(); 
 
         setTitle("WK. Cuan | Stok Barang");
@@ -94,38 +91,53 @@ private String getAllProductNames() {
         drinkTable = new JTable(tableModel);
         loadProductData(products);
 
+        // Menampilkan panel CRUD
         add(formPanel, BorderLayout.NORTH);
         
+        // Menampilkan tabel data
         JScrollPane scrollPane = new JScrollPane(drinkTable);
         add(scrollPane, BorderLayout.CENTER);
 
         
         saveButton.addActionListener(e -> {
+            int selectedRow = drinkTable.getSelectedRow();
             String code = codeField.getText();
             String name = nameField.getText();
             String category = (String) categoryField.getSelectedItem();
             String priceText = priceField.getText();
             String stockText = stockField.getText();
-
+            
             if (code.isEmpty() || name.isEmpty() || priceText.isEmpty() || stockText.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
+            
             try {
                 double price = Double.parseDouble(priceText);
                 int stock = Integer.parseInt(stockText);
 
-                tableModel.addRow(new Object[]{code, name, category, price, stock});
+                if (selectedRow != -1) {
+                    tableModel.setValueAt(code, selectedRow, 0);
+                    tableModel.setValueAt(name, selectedRow, 1);
+                    tableModel.setValueAt(category, selectedRow, 2);
+                    tableModel.setValueAt(price, selectedRow, 3);
+                    tableModel.setValueAt(stock, selectedRow, 4);
 
-                mainApp.setBannerText(getAllProductNames());
-                products.add(new Product(0, code, name, category, price, stock));
+                    JOptionPane.showMessageDialog(this, "Data berhasil diperbarui.");
+                } else {
+                    tableModel.addRow(new Object[]{code, name, category, price, stock});
+                    products.add(new Product(0, code, name, category, price, stock));
+
+                    JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan.");
+                }
 
                 codeField.setText("");
                 nameField.setText("");
+                categoryField.setSelectedIndex(0);
                 priceField.setText("");
                 stockField.setText("");
-                categoryField.setSelectedIndex(0);
+
+                mainApp.setBannerText(getAllProductNames());
 
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Harga dan stok harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -135,30 +147,18 @@ private String getAllProductNames() {
         editButton.addActionListener(e -> {
             int selectedRow = drinkTable.getSelectedRow();
             if (selectedRow != -1) {
-                String code = codeField.getText();
-                String name = nameField.getText();
-                String category = (String) categoryField.getSelectedItem();
-                String priceText = priceField.getText();
-                String stockText = stockField.getText();
-        
                 try {
-                    double price = Double.parseDouble(priceText);
-                    int stock = Integer.parseInt(stockText);
-                    
-                    tableModel.setValueAt(code, selectedRow, 0);
-                    tableModel.setValueAt(name, selectedRow, 1);
-                    tableModel.setValueAt(category, selectedRow, 2);
-                    tableModel.setValueAt(price, selectedRow, 3);
-                    tableModel.setValueAt(stock, selectedRow, 4);
-        
-                    codeField.setText("");
-                    nameField.setText("");
-                    categoryField.setSelectedIndex(0);
-                    priceField.setText("");
-                    stockField.setText("");
+                    String selectedCode = drinkTable.getValueAt(selectedRow, 0).toString();
+                    String selectedName = drinkTable.getValueAt(selectedRow, 1).toString();
+                    String selectedCategory = drinkTable.getValueAt(selectedRow, 2).toString();
+                    String selectedPrice = drinkTable.getValueAt(selectedRow, 3).toString();
+                    String selectedStock = drinkTable.getValueAt(selectedRow, 4).toString();
 
-                    mainApp.setBannerText(getAllProductNames());
-
+                    codeField.setText(selectedCode);
+                    nameField.setText(selectedName);
+                    categoryField.setSelectedItem(selectedCategory);
+                    priceField.setText(selectedPrice);
+                    stockField.setText(selectedStock);
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Harga dan stok harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -182,23 +182,6 @@ private String getAllProductNames() {
                 mainApp.setBannerText(getAllProductNames());
             } else {
                 JOptionPane.showMessageDialog(formPanel, "tidak ada yang dipilih");
-            }
-        });
-
-        drinkTable.getSelectionModel().addListSelectionListener(event -> {
-            int selectedRow = drinkTable.getSelectedRow();
-            if (selectedRow != -1) {
-                String selectedCode = drinkTable.getValueAt(selectedRow, 0).toString();
-                String selectedName = drinkTable.getValueAt(selectedRow, 1).toString();
-                String selectedCategory = drinkTable.getValueAt(selectedRow, 2).toString();
-                String selectedPrice = drinkTable.getValueAt(selectedRow, 3).toString();
-                String selectedStock = drinkTable.getValueAt(selectedRow, 4).toString();
-    
-                codeField.setText(selectedCode);
-                nameField.setText(selectedName);
-                categoryField.setSelectedItem(selectedCategory);
-                priceField.setText(selectedPrice);
-                stockField.setText(selectedStock);
             }
         });
     }
